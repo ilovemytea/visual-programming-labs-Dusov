@@ -1,0 +1,65 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Activity - Проверка данных клиента" id="activity1">
+    <mxGraphModel dx="900" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="init" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="380" y="40" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act1" value="Получить документы от клиента" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="290" y="120" width="210" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act2" value="Отправить запрос в ГИБДД" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="290" y="230" width="210" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="decision" value="Есть нарушения?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="325" y="340" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act3_no" value="Передать заявку андеррайтеру" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="290" y="470" width="210" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="act3_yes" value="Вернуть клиенту на исправление" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="580" y="340" width="210" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="final1" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="380" y="580" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="final2" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="660" y="470" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;elbow=vertical;" edge="1" parent="1" source="init" target="act1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;elbow=vertical;" edge="1" parent="1" source="act1" target="act2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;elbow=vertical;" edge="1" parent="1" source="act2" target="decision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="Нет" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;elbow=vertical;" edge="1" parent="1" source="decision" target="act3_no">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="Да" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;elbow=vertical;" edge="1" parent="1" source="decision" target="act3_yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;elbow=vertical;" edge="1" parent="1" source="act3_no" target="final1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;elbow=vertical;" edge="1" parent="1" source="act3_yes" target="final2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
