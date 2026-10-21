@@ -1,0 +1,172 @@
+[
+    {
+        "id": "t000000000047",
+        "type": "tab",
+        "label": "11 Files (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c00000000004f",
+        "type": "comment",
+        "z": "t000000000047",
+        "name": "2.11 файл /data/lab2_dusov_deliveries.jsonl лежит в volume /data",
+        "info": "",
+        "x": 280,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "i00000000004a",
+        "type": "inject",
+        "z": "t000000000047",
+        "name": "Записать",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "f000000000049"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000049",
+        "type": "function",
+        "z": "t000000000047",
+        "name": "Новая запись (JSON)",
+        "func": "// Одна поставка = одна строка JSON (формат JSON Lines)\nconst record = {\n    student: \"Дусов\",\n    savedAt: new Date().toISOString(),\n    material: [\"Кирпич\", \"Цемент\", \"Гипсокартон\"][Math.floor(Math.random() * 3)],\n    quantity: Math.floor(Math.random() * 100) + 1\n};\nmsg.payload = JSON.stringify(record);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 100,
+        "wires": [
+            [
+                "x000000000048"
+            ]
+        ]
+    },
+    {
+        "id": "x000000000048",
+        "type": "file",
+        "z": "t000000000047",
+        "name": "дописать в файл",
+        "filename": "/data/lab2_dusov_deliveries.jsonl",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "utf8",
+        "x": 660,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "i00000000004e",
+        "type": "inject",
+        "z": "t000000000047",
+        "name": "Прочитать",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 120,
+        "y": 200,
+        "wires": [
+            [
+                "j00000000004d"
+            ]
+        ]
+    },
+    {
+        "id": "j00000000004d",
+        "type": "file in",
+        "z": "t000000000047",
+        "name": "прочитать файл",
+        "filename": "/data/lab2_dusov_deliveries.jsonl",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "utf8",
+        "allProps": false,
+        "x": 270,
+        "y": 200,
+        "wires": [
+            [
+                "f00000000004c"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000004c",
+        "type": "function",
+        "z": "t000000000047",
+        "name": "Разобрать строки",
+        "func": "const lines = String(msg.payload).split(\"\\n\").filter(l => l.trim() !== \"\");\nmsg.payload = { totalRecords: lines.length, records: lines.map(l => JSON.parse(l)) };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 200,
+        "wires": [
+            [
+                "d00000000004b"
+            ]
+        ]
+    },
+    {
+        "id": "d00000000004b",
+        "type": "debug",
+        "z": "t000000000047",
+        "name": "содержимое файла",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 200,
+        "wires": []
+    }
+]

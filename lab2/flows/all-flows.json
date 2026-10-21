@@ -1,0 +1,1548 @@
+[
+    {
+        "id": "t000000000001",
+        "type": "tab",
+        "label": "01 Inject → Debug (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000004",
+        "type": "comment",
+        "z": "t000000000001",
+        "name": "2.1 inject → debug, Repeat = 5 s",
+        "info": "",
+        "x": 220,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i000000000003",
+        "type": "inject",
+        "z": "t000000000001",
+        "name": "Фамилия каждые 5 с",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/basic",
+        "payload": "Дусов, группа СПД ИИ-241",
+        "payloadType": "str",
+        "x": 230,
+        "y": 120,
+        "wires": [
+            [
+                "d000000000002"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000002",
+        "type": "debug",
+        "z": "t000000000001",
+        "name": "complete msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "t000000000005",
+        "type": "tab",
+        "label": "02 Function (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000009",
+        "type": "comment",
+        "z": "t000000000005",
+        "name": "2.2 let/const, if/else, for, массив, объект",
+        "info": "",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i000000000008",
+        "type": "inject",
+        "z": "t000000000005",
+        "name": "Показания датчика",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/function",
+        "payload": "{\"student\": \"Дусов СПД ИИ-241\", \"readings\": [21.5, 24.0, 27.3, 26.1, 23.8]}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 120,
+        "wires": [
+            [
+                "f000000000007"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000007",
+        "type": "function",
+        "z": "t000000000005",
+        "name": "Статистика показаний",
+        "func": "// Анализ показаний датчиков (код сгенерирован с помощью AI и проверен вручную)\n// Вход: msg.payload = { student, readings: [числа] }\nconst input = msg.payload || {};\nconst readings = Array.isArray(input.readings) ? input.readings : [];\nconst threshold = 25;            // порог «высокой» температуры, °C\n\nlet sum = 0;\nlet max = -Infinity;\nlet min = Infinity;\nconst above = [];                // массив значений выше порога\n\nfor (let i = 0; i < readings.length; i++) {\n    const value = Number(readings[i]);\n    sum += value;\n    if (value > max) max = value;\n    if (value < min) min = value;\n    if (value > threshold) {\n        above.push(value);\n    }\n}\n\nconst avg = readings.length > 0 ? sum / readings.length : 0;\n\nlet status;\nif (readings.length === 0) {\n    status = \"empty\";\n} else if (avg > threshold) {\n    status = \"high\";\n} else {\n    status = \"normal\";\n}\n\n// Результат — объект\nconst result = {\n    student: input.student || \"unknown\",\n    count: readings.length,\n    avg: Number(avg.toFixed(2)),\n    min: readings.length ? min : null,\n    max: readings.length ? max : null,\n    aboveThreshold: above,\n    status: status\n};\n\nmsg.topic = \"lab2/dusov/function\";\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "d000000000006"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000006",
+        "type": "debug",
+        "z": "t000000000005",
+        "name": "результат функции",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "t00000000000a",
+        "type": "tab",
+        "label": "03 Switch (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000011",
+        "type": "comment",
+        "z": "t00000000000a",
+        "name": "2.3 нажмите кнопку у любого inject",
+        "info": "",
+        "x": 220,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "i00000000000f",
+        "type": "inject",
+        "z": "t00000000000a",
+        "name": "Нормальные показания",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/switch",
+        "payload": "{\"student\": \"Дусов СПД ИИ-241\", \"readings\": [21.5, 24.0, 27.3, 26.1, 23.8]}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "f00000000000e"
+            ]
+        ]
+    },
+    {
+        "id": "i000000000010",
+        "type": "inject",
+        "z": "t00000000000a",
+        "name": "Высокие показания",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/switch",
+        "payload": "{\"student\": \"Дусов СПД ИИ-241\", \"readings\": [28.4, 30.1, 26.9, 29.5]}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "f00000000000e"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000000e",
+        "type": "function",
+        "z": "t00000000000a",
+        "name": "Статистика показаний",
+        "func": "// Анализ показаний датчиков (код сгенерирован с помощью AI и проверен вручную)\n// Вход: msg.payload = { student, readings: [числа] }\nconst input = msg.payload || {};\nconst readings = Array.isArray(input.readings) ? input.readings : [];\nconst threshold = 25;            // порог «высокой» температуры, °C\n\nlet sum = 0;\nlet max = -Infinity;\nlet min = Infinity;\nconst above = [];                // массив значений выше порога\n\nfor (let i = 0; i < readings.length; i++) {\n    const value = Number(readings[i]);\n    sum += value;\n    if (value > max) max = value;\n    if (value < min) min = value;\n    if (value > threshold) {\n        above.push(value);\n    }\n}\n\nconst avg = readings.length > 0 ? sum / readings.length : 0;\n\nlet status;\nif (readings.length === 0) {\n    status = \"empty\";\n} else if (avg > threshold) {\n    status = \"high\";\n} else {\n    status = \"normal\";\n}\n\n// Результат — объект\nconst result = {\n    student: input.student || \"unknown\",\n    count: readings.length,\n    avg: Number(avg.toFixed(2)),\n    min: readings.length ? min : null,\n    max: readings.length ? max : null,\n    aboveThreshold: above,\n    status: status\n};\n\nmsg.topic = \"lab2/dusov/function\";\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 140,
+        "wires": [
+            [
+                "s00000000000d"
+            ]
+        ]
+    },
+    {
+        "id": "s00000000000d",
+        "type": "switch",
+        "z": "t00000000000a",
+        "name": "status == high ?",
+        "property": "payload.status",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "high",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 640,
+        "y": 140,
+        "wires": [
+            [
+                "d00000000000b"
+            ],
+            [
+                "d00000000000c"
+            ]
+        ]
+    },
+    {
+        "id": "d00000000000b",
+        "type": "debug",
+        "z": "t00000000000a",
+        "name": "выход 1: high",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "d00000000000c",
+        "type": "debug",
+        "z": "t00000000000a",
+        "name": "выход 2: normal/empty",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "t000000000012",
+        "type": "tab",
+        "label": "04 Change (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000016",
+        "type": "comment",
+        "z": "t000000000012",
+        "name": "2.4 Set msg.topic, msg.timestamp, msg.payload",
+        "info": "",
+        "x": 270,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i000000000015",
+        "type": "inject",
+        "z": "t000000000012",
+        "name": "Старт",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 120,
+        "wires": [
+            [
+                "h000000000014"
+            ]
+        ]
+    },
+    {
+        "id": "h000000000014",
+        "type": "change",
+        "z": "t000000000012",
+        "name": "topic + timestamp + payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "lab2/dusov/change",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "timestamp",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"student\": \"Дусов\", \"group\": \"СПД ИИ-241\", \"lab\": 2, \"node\": \"change\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "d000000000013"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000013",
+        "type": "debug",
+        "z": "t000000000012",
+        "name": "complete msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "t000000000017",
+        "type": "tab",
+        "label": "05 Template (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c00000000001b",
+        "type": "comment",
+        "z": "t000000000017",
+        "name": "2.5 Syntax = Mustache, Format = JSON",
+        "info": "",
+        "x": 230,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i00000000001a",
+        "type": "inject",
+        "z": "t000000000017",
+        "name": "Объект с 3 полями",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/template",
+        "payload": "{\"student\": \"Дусов\", \"group\": \"СПД ИИ-241\", \"material\": \"Кирпич керамический М150\"}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 120,
+        "wires": [
+            [
+                "m000000000019"
+            ]
+        ]
+    },
+    {
+        "id": "m000000000019",
+        "type": "template",
+        "z": "t000000000017",
+        "name": "Mustache → JSON",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"report\": \"Лабораторная №2, Node-RED\",\n    \"student\": \"{{payload.student}}\",\n    \"group\": \"{{payload.group}}\",\n    \"material\": \"{{payload.material}}\",\n    \"message\": \"Студент {{payload.student}} ({{payload.group}}) изучает ноду template на примере материала «{{payload.material}}»\"\n}",
+        "output": "json",
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "d000000000018"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000018",
+        "type": "debug",
+        "z": "t000000000017",
+        "name": "результат шаблона",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "t00000000001c",
+        "type": "tab",
+        "label": "06 HTTP Request (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000020",
+        "type": "comment",
+        "z": "t00000000001c",
+        "name": "2.6 GET, Return = a parsed JSON object",
+        "info": "",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i00000000001f",
+        "type": "inject",
+        "z": "t00000000001c",
+        "name": "Запросить факт",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/http",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 120,
+        "wires": [
+            [
+                "r00000000001e"
+            ]
+        ]
+    },
+    {
+        "id": "r00000000001e",
+        "type": "http request",
+        "z": "t00000000001c",
+        "name": "GET catfact.ninja/fact",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://catfact.ninja/fact",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "d00000000001d"
+            ]
+        ]
+    },
+    {
+        "id": "d00000000001d",
+        "type": "debug",
+        "z": "t00000000001c",
+        "name": "ответ API",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "t000000000021",
+        "type": "tab",
+        "label": "07 MQTT (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000028",
+        "type": "comment",
+        "z": "t000000000021",
+        "name": "2.7 топик student/dusov/lab2/temperature",
+        "info": "",
+        "x": 260,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "i000000000025",
+        "type": "inject",
+        "z": "t000000000021",
+        "name": "каждые 5 с",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "f000000000024"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000024",
+        "type": "function",
+        "z": "t000000000021",
+        "name": "Случайная температура",
+        "func": "// Случайное значение 18..30 °C\nconst value = Number((18 + Math.random() * 12).toFixed(1));\nmsg.payload = { student: \"Дусов\", sensor: \"temperature\", value: value, ts: Date.now() };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 100,
+        "wires": [
+            [
+                "o000000000023"
+            ]
+        ]
+    },
+    {
+        "id": "o000000000023",
+        "type": "mqtt out",
+        "z": "t000000000021",
+        "name": "publish",
+        "topic": "student/dusov/lab2/temperature",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "b000000000022",
+        "x": 640,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "n000000000027",
+        "type": "mqtt in",
+        "z": "t000000000021",
+        "name": "subscribe",
+        "topic": "student/dusov/lab2/temperature",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "b000000000022",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 200,
+        "wires": [
+            [
+                "d000000000026"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000026",
+        "type": "debug",
+        "z": "t000000000021",
+        "name": "пришло из брокера",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "b000000000022",
+        "type": "mqtt-broker",
+        "name": "HiveMQ public",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "t000000000029",
+        "type": "tab",
+        "label": "08 GET endpoints (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c00000000002a",
+        "type": "comment",
+        "z": "t000000000029",
+        "name": "2.8 http://localhost:1880/api/...",
+        "info": "",
+        "x": 220,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "q00000000002d",
+        "type": "http in",
+        "z": "t000000000029",
+        "name": "",
+        "url": "/api/text",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 100,
+        "wires": [
+            [
+                "f00000000002c"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000002c",
+        "type": "function",
+        "z": "t000000000029",
+        "name": "Простой текст",
+        "func": "msg.headers = { \"Content-Type\": \"text/plain; charset=utf-8\" };\nmsg.payload = \"Привет! Это лабораторная №2 по Node-RED. Студент: Дусов, группа СПД ИИ-241.\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 100,
+        "wires": [
+            [
+                "p00000000002b"
+            ]
+        ]
+    },
+    {
+        "id": "p00000000002b",
+        "type": "http response",
+        "z": "t000000000029",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 650,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "q000000000030",
+        "type": "http in",
+        "z": "t000000000029",
+        "name": "",
+        "url": "/api/info",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 180,
+        "wires": [
+            [
+                "f00000000002f"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000002f",
+        "type": "function",
+        "z": "t000000000029",
+        "name": "JSON с двумя полями",
+        "func": "msg.payload = {\n    student: \"Дусов\",\n    serverTime: new Date().toISOString()\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 180,
+        "wires": [
+            [
+                "p00000000002e"
+            ]
+        ]
+    },
+    {
+        "id": "p00000000002e",
+        "type": "http response",
+        "z": "t000000000029",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 650,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "q000000000033",
+        "type": "http in",
+        "z": "t000000000029",
+        "name": "",
+        "url": "/api/items",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "f000000000032"
+            ]
+        ]
+    },
+    {
+        "id": "q000000000034",
+        "type": "http in",
+        "z": "t000000000029",
+        "name": "",
+        "url": "/api/items/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 210,
+        "y": 320,
+        "wires": [
+            [
+                "f000000000032"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000032",
+        "type": "function",
+        "z": "t000000000029",
+        "name": "Материалы + валидация",
+        "func": "// GET /api/items        — список, query: ?category=<строка>&limit=<1..10>\n// GET /api/items/:id    — один материал по id\nconst items = [\n    { id: 1, name: \"Кирпич керамический М150\", category: \"brick\",  price: 420 },\n    { id: 2, name: \"Цемент М500 Д0\",           category: \"cement\", price: 18 },\n    { id: 3, name: \"ГКЛ Стандарт 12.5 мм\",     category: \"gypsum\", price: 9 },\n    { id: 4, name: \"Минеральная вата Лайт\",    category: \"insulation\", price: 35 },\n    { id: 5, name: \"Кирпич силикатный М100\",   category: \"brick\",  price: 310 }\n];\n\nfunction reply(status, body) {\n    msg.statusCode = status;\n    msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    msg.payload = body;\n    return msg;\n}\n\nconst params = msg.req.params || {};\nconst query = msg.req.query || {};\n\n// --- /api/items/:id ---\nif (params.id !== undefined) {\n    if (!/^\\d+$/.test(params.id)) {\n        return reply(400, { error: \"id должен быть положительным целым числом\", got: params.id });\n    }\n    const item = items.find(x => x.id === Number(params.id));\n    if (!item) {\n        return reply(404, { error: \"Материал не найден\", id: Number(params.id) });\n    }\n    return reply(200, item);\n}\n\n// --- /api/items?category=&limit= ---\nlet result = items;\nif (query.category !== undefined) {\n    result = result.filter(x => x.category === query.category);\n    if (result.length === 0) {\n        return reply(404, { error: \"Нет материалов в категории\", category: query.category });\n    }\n}\nif (query.limit !== undefined) {\n    const limit = Number(query.limit);\n    if (!Number.isInteger(limit) || limit < 1 || limit > 10) {\n        return reply(400, { error: \"limit должен быть целым числом от 1 до 10\", got: query.limit });\n    }\n    result = result.slice(0, limit);\n}\nreturn reply(200, { student: \"Дусов\", count: result.length, items: result });",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 290,
+        "wires": [
+            [
+                "p000000000031"
+            ]
+        ]
+    },
+    {
+        "id": "p000000000031",
+        "type": "http response",
+        "z": "t000000000029",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 650,
+        "y": 290,
+        "wires": []
+    },
+    {
+        "id": "t000000000035",
+        "type": "tab",
+        "label": "09 Dashboard (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c00000000003c",
+        "type": "comment",
+        "z": "t000000000035",
+        "name": "2.9 http://localhost:1880/ui",
+        "info": "",
+        "x": 220,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i00000000003b",
+        "type": "inject",
+        "z": "t000000000035",
+        "name": "каждые 2 с",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 130,
+        "wires": [
+            [
+                "f00000000003a"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000003a",
+        "type": "function",
+        "z": "t000000000035",
+        "name": "Имитация датчика",
+        "func": "// Плавно меняющаяся температура: синус + шум\nconst step = (context.get(\"step\") || 0) + 1;\ncontext.set(\"step\", step);\nconst value = 20 + 6 * Math.sin(step / 6) + (Math.random() - 0.5) * 1.5;\nmsg.topic = \"Склад, °C\";\nmsg.payload = Number(value.toFixed(1));\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 130,
+        "wires": [
+            [
+                "a000000000038",
+                "k000000000039"
+            ]
+        ]
+    },
+    {
+        "id": "a000000000038",
+        "type": "ui_gauge",
+        "z": "t000000000035",
+        "name": "",
+        "group": "g000000000037",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Температура сейчас",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": "-10",
+        "max": "40",
+        "colors": [
+            "#2f7fd8",
+            "#00b500",
+            "#ca3838"
+        ],
+        "seg1": "15",
+        "seg2": "28",
+        "diff": false,
+        "className": "",
+        "x": 640,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "k000000000039",
+        "type": "ui_chart",
+        "z": "t000000000035",
+        "name": "",
+        "group": "g000000000037",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "История температуры (последние 10 мин)",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Ждём данных…",
+        "dot": false,
+        "ymin": "-10",
+        "ymax": "40",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 650,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "g000000000037",
+        "type": "ui_group",
+        "name": "Датчик температуры на складе",
+        "tab": "u000000000036",
+        "order": 1,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "u000000000036",
+        "type": "ui_tab",
+        "name": "Лаба 2 — Дусов",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "t00000000003d",
+        "type": "tab",
+        "label": "10 Telegram (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000046",
+        "type": "comment",
+        "z": "t00000000003d",
+        "name": "2.10 токен бота вводится в config-ноде telegram bot",
+        "info": "",
+        "x": 300,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "w000000000043",
+        "type": "telegram command",
+        "z": "t00000000003d",
+        "name": "",
+        "command": "/start",
+        "description": "Приветствие и список команд",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "y00000000003e",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 200,
+        "y": 100,
+        "wires": [
+            [
+                "f000000000040"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "w000000000044",
+        "type": "telegram command",
+        "z": "t00000000003d",
+        "name": "",
+        "command": "/material",
+        "description": "Случайный строительный материал",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "y00000000003e",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 210,
+        "y": 180,
+        "wires": [
+            [
+                "f000000000041"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "v000000000045",
+        "type": "telegram receiver",
+        "z": "t00000000003d",
+        "name": "все сообщения",
+        "bot": "y00000000003e",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 210,
+        "y": 260,
+        "wires": [
+            [
+                "f000000000042"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "f000000000040",
+        "type": "function",
+        "z": "t00000000003d",
+        "name": "/start",
+        "func": "msg.payload = {\n    chatId: msg.payload.chatId,\n    type: \"message\",\n    content: \"Привет! Я бот лабораторной №2 по Node-RED (Дусов).\\n\" +\n             \"Команды:\\n/start — это сообщение\\n/material — случайный строительный материал\\n\" +\n             \"Любой другой текст я просто повторю.\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 100,
+        "wires": [
+            [
+                "e00000000003f"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000041",
+        "type": "function",
+        "z": "t00000000003d",
+        "name": "/material",
+        "func": "const materials = [\"Кирпич керамический М150\", \"Цемент М500 Д0\",\n                   \"ГКЛ Стандарт 12.5 мм\", \"Минеральная вата Лайт\", \"Брус 150x150\"];\nconst pick = materials[Math.floor(Math.random() * materials.length)];\nmsg.payload = { chatId: msg.payload.chatId, type: \"message\", content: \"Случайный материал: \" + pick };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 180,
+        "wires": [
+            [
+                "e00000000003f"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000042",
+        "type": "function",
+        "z": "t00000000003d",
+        "name": "echo",
+        "func": "const text = msg.payload.content;\n// Команды обрабатываются отдельными нодами, их не повторяем\nif (typeof text !== \"string\" || text.startsWith(\"/\")) {\n    return null;\n}\nmsg.payload = { chatId: msg.payload.chatId, type: \"message\", content: \"Вы написали: \" + text };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 260,
+        "wires": [
+            [
+                "e00000000003f"
+            ]
+        ]
+    },
+    {
+        "id": "e00000000003f",
+        "type": "telegram sender",
+        "z": "t00000000003d",
+        "name": "ответ",
+        "bot": "y00000000003e",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 760,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "y00000000003e",
+        "type": "telegram bot",
+        "botname": "tvl_lab2_dusov_bot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "t000000000047",
+        "type": "tab",
+        "label": "11 Files (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c00000000004f",
+        "type": "comment",
+        "z": "t000000000047",
+        "name": "2.11 файл /data/lab2_dusov_deliveries.jsonl лежит в volume /data",
+        "info": "",
+        "x": 280,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "i00000000004a",
+        "type": "inject",
+        "z": "t000000000047",
+        "name": "Записать",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "f000000000049"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000049",
+        "type": "function",
+        "z": "t000000000047",
+        "name": "Новая запись (JSON)",
+        "func": "// Одна поставка = одна строка JSON (формат JSON Lines)\nconst record = {\n    student: \"Дусов\",\n    savedAt: new Date().toISOString(),\n    material: [\"Кирпич\", \"Цемент\", \"Гипсокартон\"][Math.floor(Math.random() * 3)],\n    quantity: Math.floor(Math.random() * 100) + 1\n};\nmsg.payload = JSON.stringify(record);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 100,
+        "wires": [
+            [
+                "x000000000048"
+            ]
+        ]
+    },
+    {
+        "id": "x000000000048",
+        "type": "file",
+        "z": "t000000000047",
+        "name": "дописать в файл",
+        "filename": "/data/lab2_dusov_deliveries.jsonl",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "utf8",
+        "x": 660,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "i00000000004e",
+        "type": "inject",
+        "z": "t000000000047",
+        "name": "Прочитать",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 120,
+        "y": 200,
+        "wires": [
+            [
+                "j00000000004d"
+            ]
+        ]
+    },
+    {
+        "id": "j00000000004d",
+        "type": "file in",
+        "z": "t000000000047",
+        "name": "прочитать файл",
+        "filename": "/data/lab2_dusov_deliveries.jsonl",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "utf8",
+        "allProps": false,
+        "x": 270,
+        "y": 200,
+        "wires": [
+            [
+                "f00000000004c"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000004c",
+        "type": "function",
+        "z": "t000000000047",
+        "name": "Разобрать строки",
+        "func": "const lines = String(msg.payload).split(\"\\n\").filter(l => l.trim() !== \"\");\nmsg.payload = { totalRecords: lines.length, records: lines.map(l => JSON.parse(l)) };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 200,
+        "wires": [
+            [
+                "d00000000004b"
+            ]
+        ]
+    },
+    {
+        "id": "d00000000004b",
+        "type": "debug",
+        "z": "t000000000047",
+        "name": "содержимое файла",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "t000000000050",
+        "type": "tab",
+        "label": "12 Context (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000055",
+        "type": "comment",
+        "z": "t000000000050",
+        "name": "2.12 значения видно во вкладке Context Data",
+        "info": "",
+        "x": 260,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "i000000000053",
+        "type": "inject",
+        "z": "t000000000050",
+        "name": "+1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "increment",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "f000000000052"
+            ]
+        ]
+    },
+    {
+        "id": "i000000000054",
+        "type": "inject",
+        "z": "t000000000050",
+        "name": "Сброс",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "reset",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 180,
+        "wires": [
+            [
+                "f000000000052"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000052",
+        "type": "function",
+        "z": "t000000000050",
+        "name": "Счётчик во flow context",
+        "func": "// Счётчик живёт между сообщениями в flow context\nif (msg.topic === \"reset\") {\n    flow.set(\"dusovCounter\", 0);\n    flow.set(\"dusovHistory\", []);\n    msg.payload = { action: \"reset\", counter: 0 };\n    return msg;\n}\nconst counter = (flow.get(\"dusovCounter\") || 0) + 1;\nconst history = flow.get(\"dusovHistory\") || [];\nhistory.push(new Date().toLocaleTimeString(\"ru-RU\"));\nif (history.length > 5) history.shift();      // храним 5 последних отметок\nflow.set(\"dusovCounter\", counter);\nflow.set(\"dusovHistory\", history);\nmsg.payload = { action: \"increment\", counter: counter, lastTimes: history };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 140,
+        "wires": [
+            [
+                "d000000000051"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000051",
+        "type": "debug",
+        "z": "t000000000050",
+        "name": "счётчик",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 140,
+        "wires": []
+    }
+]

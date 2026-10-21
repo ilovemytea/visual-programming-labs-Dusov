@@ -1,0 +1,115 @@
+[
+    {
+        "id": "t000000000050",
+        "type": "tab",
+        "label": "12 Context (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000055",
+        "type": "comment",
+        "z": "t000000000050",
+        "name": "2.12 значения видно во вкладке Context Data",
+        "info": "",
+        "x": 260,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "i000000000053",
+        "type": "inject",
+        "z": "t000000000050",
+        "name": "+1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "increment",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "f000000000052"
+            ]
+        ]
+    },
+    {
+        "id": "i000000000054",
+        "type": "inject",
+        "z": "t000000000050",
+        "name": "Сброс",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "reset",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 180,
+        "wires": [
+            [
+                "f000000000052"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000052",
+        "type": "function",
+        "z": "t000000000050",
+        "name": "Счётчик во flow context",
+        "func": "// Счётчик живёт между сообщениями в flow context\nif (msg.topic === \"reset\") {\n    flow.set(\"dusovCounter\", 0);\n    flow.set(\"dusovHistory\", []);\n    msg.payload = { action: \"reset\", counter: 0 };\n    return msg;\n}\nconst counter = (flow.get(\"dusovCounter\") || 0) + 1;\nconst history = flow.get(\"dusovHistory\") || [];\nhistory.push(new Date().toLocaleTimeString(\"ru-RU\"));\nif (history.length > 5) history.shift();      // храним 5 последних отметок\nflow.set(\"dusovCounter\", counter);\nflow.set(\"dusovHistory\", history);\nmsg.payload = { action: \"increment\", counter: counter, lastTimes: history };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 140,
+        "wires": [
+            [
+                "d000000000051"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000051",
+        "type": "debug",
+        "z": "t000000000050",
+        "name": "счётчик",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 140,
+        "wires": []
+    }
+]
