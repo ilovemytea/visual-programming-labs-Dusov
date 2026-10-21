@@ -1,0 +1,181 @@
+[
+    {
+        "id": "t000000000029",
+        "type": "tab",
+        "label": "08 GET endpoints (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c00000000002a",
+        "type": "comment",
+        "z": "t000000000029",
+        "name": "2.8 http://localhost:1880/api/...",
+        "info": "",
+        "x": 220,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "q00000000002d",
+        "type": "http in",
+        "z": "t000000000029",
+        "name": "",
+        "url": "/api/text",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 100,
+        "wires": [
+            [
+                "f00000000002c"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000002c",
+        "type": "function",
+        "z": "t000000000029",
+        "name": "Простой текст",
+        "func": "msg.headers = { \"Content-Type\": \"text/plain; charset=utf-8\" };\nmsg.payload = \"Привет! Это лабораторная №2 по Node-RED. Студент: Дусов, группа СПД ИИ-241.\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 100,
+        "wires": [
+            [
+                "p00000000002b"
+            ]
+        ]
+    },
+    {
+        "id": "p00000000002b",
+        "type": "http response",
+        "z": "t000000000029",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 650,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "q000000000030",
+        "type": "http in",
+        "z": "t000000000029",
+        "name": "",
+        "url": "/api/info",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 180,
+        "wires": [
+            [
+                "f00000000002f"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000002f",
+        "type": "function",
+        "z": "t000000000029",
+        "name": "JSON с двумя полями",
+        "func": "msg.payload = {\n    student: \"Дусов\",\n    serverTime: new Date().toISOString()\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 180,
+        "wires": [
+            [
+                "p00000000002e"
+            ]
+        ]
+    },
+    {
+        "id": "p00000000002e",
+        "type": "http response",
+        "z": "t000000000029",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 650,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "q000000000033",
+        "type": "http in",
+        "z": "t000000000029",
+        "name": "",
+        "url": "/api/items",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "f000000000032"
+            ]
+        ]
+    },
+    {
+        "id": "q000000000034",
+        "type": "http in",
+        "z": "t000000000029",
+        "name": "",
+        "url": "/api/items/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 210,
+        "y": 320,
+        "wires": [
+            [
+                "f000000000032"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000032",
+        "type": "function",
+        "z": "t000000000029",
+        "name": "Материалы + валидация",
+        "func": "// GET /api/items        — список, query: ?category=<строка>&limit=<1..10>\n// GET /api/items/:id    — один материал по id\nconst items = [\n    { id: 1, name: \"Кирпич керамический М150\", category: \"brick\",  price: 420 },\n    { id: 2, name: \"Цемент М500 Д0\",           category: \"cement\", price: 18 },\n    { id: 3, name: \"ГКЛ Стандарт 12.5 мм\",     category: \"gypsum\", price: 9 },\n    { id: 4, name: \"Минеральная вата Лайт\",    category: \"insulation\", price: 35 },\n    { id: 5, name: \"Кирпич силикатный М100\",   category: \"brick\",  price: 310 }\n];\n\nfunction reply(status, body) {\n    msg.statusCode = status;\n    msg.headers = { \"Content-Type\": \"application/json; charset=utf-8\" };\n    msg.payload = body;\n    return msg;\n}\n\nconst params = msg.req.params || {};\nconst query = msg.req.query || {};\n\n// --- /api/items/:id ---\nif (params.id !== undefined) {\n    if (!/^\\d+$/.test(params.id)) {\n        return reply(400, { error: \"id должен быть положительным целым числом\", got: params.id });\n    }\n    const item = items.find(x => x.id === Number(params.id));\n    if (!item) {\n        return reply(404, { error: \"Материал не найден\", id: Number(params.id) });\n    }\n    return reply(200, item);\n}\n\n// --- /api/items?category=&limit= ---\nlet result = items;\nif (query.category !== undefined) {\n    result = result.filter(x => x.category === query.category);\n    if (result.length === 0) {\n        return reply(404, { error: \"Нет материалов в категории\", category: query.category });\n    }\n}\nif (query.limit !== undefined) {\n    const limit = Number(query.limit);\n    if (!Number.isInteger(limit) || limit < 1 || limit > 10) {\n        return reply(400, { error: \"limit должен быть целым числом от 1 до 10\", got: query.limit });\n    }\n    result = result.slice(0, limit);\n}\nreturn reply(200, { student: \"Дусов\", count: result.length, items: result });",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 290,
+        "wires": [
+            [
+                "p000000000031"
+            ]
+        ]
+    },
+    {
+        "id": "p000000000031",
+        "type": "http response",
+        "z": "t000000000029",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 650,
+        "y": 290,
+        "wires": []
+    }
+]

@@ -1,0 +1,162 @@
+[
+    {
+        "id": "t000000000035",
+        "type": "tab",
+        "label": "09 Dashboard (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c00000000003c",
+        "type": "comment",
+        "z": "t000000000035",
+        "name": "2.9 http://localhost:1880/ui",
+        "info": "",
+        "x": 220,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i00000000003b",
+        "type": "inject",
+        "z": "t000000000035",
+        "name": "каждые 2 с",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 130,
+        "wires": [
+            [
+                "f00000000003a"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000003a",
+        "type": "function",
+        "z": "t000000000035",
+        "name": "Имитация датчика",
+        "func": "// Плавно меняющаяся температура: синус + шум\nconst step = (context.get(\"step\") || 0) + 1;\ncontext.set(\"step\", step);\nconst value = 20 + 6 * Math.sin(step / 6) + (Math.random() - 0.5) * 1.5;\nmsg.topic = \"Склад, °C\";\nmsg.payload = Number(value.toFixed(1));\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 130,
+        "wires": [
+            [
+                "a000000000038",
+                "k000000000039"
+            ]
+        ]
+    },
+    {
+        "id": "a000000000038",
+        "type": "ui_gauge",
+        "z": "t000000000035",
+        "name": "",
+        "group": "g000000000037",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Температура сейчас",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": "-10",
+        "max": "40",
+        "colors": [
+            "#2f7fd8",
+            "#00b500",
+            "#ca3838"
+        ],
+        "seg1": "15",
+        "seg2": "28",
+        "diff": false,
+        "className": "",
+        "x": 640,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "k000000000039",
+        "type": "ui_chart",
+        "z": "t000000000035",
+        "name": "",
+        "group": "g000000000037",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "История температуры (последние 10 мин)",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Ждём данных…",
+        "dot": false,
+        "ymin": "-10",
+        "ymax": "40",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 650,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "g000000000037",
+        "type": "ui_group",
+        "name": "Датчик температуры на складе",
+        "tab": "u000000000036",
+        "order": 1,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "u000000000036",
+        "type": "ui_tab",
+        "name": "Лаба 2 — Дусов",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]

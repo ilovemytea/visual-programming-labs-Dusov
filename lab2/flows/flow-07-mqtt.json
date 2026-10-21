@@ -1,0 +1,156 @@
+[
+    {
+        "id": "t000000000021",
+        "type": "tab",
+        "label": "07 MQTT (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000028",
+        "type": "comment",
+        "z": "t000000000021",
+        "name": "2.7 топик student/dusov/lab2/temperature",
+        "info": "",
+        "x": 260,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "i000000000025",
+        "type": "inject",
+        "z": "t000000000021",
+        "name": "каждые 5 с",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "f000000000024"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000024",
+        "type": "function",
+        "z": "t000000000021",
+        "name": "Случайная температура",
+        "func": "// Случайное значение 18..30 °C\nconst value = Number((18 + Math.random() * 12).toFixed(1));\nmsg.payload = { student: \"Дусов\", sensor: \"temperature\", value: value, ts: Date.now() };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 100,
+        "wires": [
+            [
+                "o000000000023"
+            ]
+        ]
+    },
+    {
+        "id": "o000000000023",
+        "type": "mqtt out",
+        "z": "t000000000021",
+        "name": "publish",
+        "topic": "student/dusov/lab2/temperature",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "b000000000022",
+        "x": 640,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "n000000000027",
+        "type": "mqtt in",
+        "z": "t000000000021",
+        "name": "subscribe",
+        "topic": "student/dusov/lab2/temperature",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "b000000000022",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 200,
+        "wires": [
+            [
+                "d000000000026"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000026",
+        "type": "debug",
+        "z": "t000000000021",
+        "name": "пришло из брокера",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "b000000000022",
+        "type": "mqtt-broker",
+        "name": "HiveMQ public",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

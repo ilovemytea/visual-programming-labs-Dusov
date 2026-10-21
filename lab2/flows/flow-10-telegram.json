@@ -1,0 +1,187 @@
+[
+    {
+        "id": "t00000000003d",
+        "type": "tab",
+        "label": "10 Telegram (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000046",
+        "type": "comment",
+        "z": "t00000000003d",
+        "name": "2.10 токен бота вводится в config-ноде telegram bot",
+        "info": "",
+        "x": 300,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "w000000000043",
+        "type": "telegram command",
+        "z": "t00000000003d",
+        "name": "",
+        "command": "/start",
+        "description": "Приветствие и список команд",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "y00000000003e",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 200,
+        "y": 100,
+        "wires": [
+            [
+                "f000000000040"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "w000000000044",
+        "type": "telegram command",
+        "z": "t00000000003d",
+        "name": "",
+        "command": "/material",
+        "description": "Случайный строительный материал",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "y00000000003e",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 210,
+        "y": 180,
+        "wires": [
+            [
+                "f000000000041"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "v000000000045",
+        "type": "telegram receiver",
+        "z": "t00000000003d",
+        "name": "все сообщения",
+        "bot": "y00000000003e",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 210,
+        "y": 260,
+        "wires": [
+            [
+                "f000000000042"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "f000000000040",
+        "type": "function",
+        "z": "t00000000003d",
+        "name": "/start",
+        "func": "msg.payload = {\n    chatId: msg.payload.chatId,\n    type: \"message\",\n    content: \"Привет! Я бот лабораторной №2 по Node-RED (Дусов).\\n\" +\n             \"Команды:\\n/start — это сообщение\\n/material — случайный строительный материал\\n\" +\n             \"Любой другой текст я просто повторю.\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 100,
+        "wires": [
+            [
+                "e00000000003f"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000041",
+        "type": "function",
+        "z": "t00000000003d",
+        "name": "/material",
+        "func": "const materials = [\"Кирпич керамический М150\", \"Цемент М500 Д0\",\n                   \"ГКЛ Стандарт 12.5 мм\", \"Минеральная вата Лайт\", \"Брус 150x150\"];\nconst pick = materials[Math.floor(Math.random() * materials.length)];\nmsg.payload = { chatId: msg.payload.chatId, type: \"message\", content: \"Случайный материал: \" + pick };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 180,
+        "wires": [
+            [
+                "e00000000003f"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000042",
+        "type": "function",
+        "z": "t00000000003d",
+        "name": "echo",
+        "func": "const text = msg.payload.content;\n// Команды обрабатываются отдельными нодами, их не повторяем\nif (typeof text !== \"string\" || text.startsWith(\"/\")) {\n    return null;\n}\nmsg.payload = { chatId: msg.payload.chatId, type: \"message\", content: \"Вы написали: \" + text };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 260,
+        "wires": [
+            [
+                "e00000000003f"
+            ]
+        ]
+    },
+    {
+        "id": "e00000000003f",
+        "type": "telegram sender",
+        "z": "t00000000003d",
+        "name": "ответ",
+        "bot": "y00000000003e",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 760,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "y00000000003e",
+        "type": "telegram bot",
+        "botname": "tvl_lab2_dusov_bot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    }
+]
