@@ -1,0 +1,163 @@
+[
+    {
+        "id": "t00000000000a",
+        "type": "tab",
+        "label": "03 Switch (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000011",
+        "type": "comment",
+        "z": "t00000000000a",
+        "name": "2.3 нажмите кнопку у любого inject",
+        "info": "",
+        "x": 220,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "i00000000000f",
+        "type": "inject",
+        "z": "t00000000000a",
+        "name": "Нормальные показания",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/switch",
+        "payload": "{\"student\": \"Дусов СПД ИИ-241\", \"readings\": [21.5, 24.0, 27.3, 26.1, 23.8]}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "f00000000000e"
+            ]
+        ]
+    },
+    {
+        "id": "i000000000010",
+        "type": "inject",
+        "z": "t00000000000a",
+        "name": "Высокие показания",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/switch",
+        "payload": "{\"student\": \"Дусов СПД ИИ-241\", \"readings\": [28.4, 30.1, 26.9, 29.5]}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "f00000000000e"
+            ]
+        ]
+    },
+    {
+        "id": "f00000000000e",
+        "type": "function",
+        "z": "t00000000000a",
+        "name": "Статистика показаний",
+        "func": "// Анализ показаний датчиков (код сгенерирован с помощью AI и проверен вручную)\n// Вход: msg.payload = { student, readings: [числа] }\nconst input = msg.payload || {};\nconst readings = Array.isArray(input.readings) ? input.readings : [];\nconst threshold = 25;            // порог «высокой» температуры, °C\n\nlet sum = 0;\nlet max = -Infinity;\nlet min = Infinity;\nconst above = [];                // массив значений выше порога\n\nfor (let i = 0; i < readings.length; i++) {\n    const value = Number(readings[i]);\n    sum += value;\n    if (value > max) max = value;\n    if (value < min) min = value;\n    if (value > threshold) {\n        above.push(value);\n    }\n}\n\nconst avg = readings.length > 0 ? sum / readings.length : 0;\n\nlet status;\nif (readings.length === 0) {\n    status = \"empty\";\n} else if (avg > threshold) {\n    status = \"high\";\n} else {\n    status = \"normal\";\n}\n\n// Результат — объект\nconst result = {\n    student: input.student || \"unknown\",\n    count: readings.length,\n    avg: Number(avg.toFixed(2)),\n    min: readings.length ? min : null,\n    max: readings.length ? max : null,\n    aboveThreshold: above,\n    status: status\n};\n\nmsg.topic = \"lab2/dusov/function\";\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 140,
+        "wires": [
+            [
+                "s00000000000d"
+            ]
+        ]
+    },
+    {
+        "id": "s00000000000d",
+        "type": "switch",
+        "z": "t00000000000a",
+        "name": "status == high ?",
+        "property": "payload.status",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "high",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 640,
+        "y": 140,
+        "wires": [
+            [
+                "d00000000000b"
+            ],
+            [
+                "d00000000000c"
+            ]
+        ]
+    },
+    {
+        "id": "d00000000000b",
+        "type": "debug",
+        "z": "t00000000000a",
+        "name": "выход 1: high",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "d00000000000c",
+        "type": "debug",
+        "z": "t00000000000a",
+        "name": "выход 2: normal/empty",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 180,
+        "wires": []
+    }
+]

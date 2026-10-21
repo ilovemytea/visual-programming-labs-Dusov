@@ -1,0 +1,85 @@
+[
+    {
+        "id": "t000000000017",
+        "type": "tab",
+        "label": "05 Template (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c00000000001b",
+        "type": "comment",
+        "z": "t000000000017",
+        "name": "2.5 Syntax = Mustache, Format = JSON",
+        "info": "",
+        "x": 230,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i00000000001a",
+        "type": "inject",
+        "z": "t000000000017",
+        "name": "Объект с 3 полями",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/template",
+        "payload": "{\"student\": \"Дусов\", \"group\": \"СПД ИИ-241\", \"material\": \"Кирпич керамический М150\"}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 120,
+        "wires": [
+            [
+                "m000000000019"
+            ]
+        ]
+    },
+    {
+        "id": "m000000000019",
+        "type": "template",
+        "z": "t000000000017",
+        "name": "Mustache → JSON",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"report\": \"Лабораторная №2, Node-RED\",\n    \"student\": \"{{payload.student}}\",\n    \"group\": \"{{payload.group}}\",\n    \"material\": \"{{payload.material}}\",\n    \"message\": \"Студент {{payload.student}} ({{payload.group}}) изучает ноду template на примере материала «{{payload.material}}»\"\n}",
+        "output": "json",
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "d000000000018"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000018",
+        "type": "debug",
+        "z": "t000000000017",
+        "name": "результат шаблона",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    }
+]

@@ -1,0 +1,86 @@
+[
+    {
+        "id": "t000000000005",
+        "type": "tab",
+        "label": "02 Function (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000009",
+        "type": "comment",
+        "z": "t000000000005",
+        "name": "2.2 let/const, if/else, for, массив, объект",
+        "info": "",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i000000000008",
+        "type": "inject",
+        "z": "t000000000005",
+        "name": "Показания датчика",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/function",
+        "payload": "{\"student\": \"Дусов СПД ИИ-241\", \"readings\": [21.5, 24.0, 27.3, 26.1, 23.8]}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 120,
+        "wires": [
+            [
+                "f000000000007"
+            ]
+        ]
+    },
+    {
+        "id": "f000000000007",
+        "type": "function",
+        "z": "t000000000005",
+        "name": "Статистика показаний",
+        "func": "// Анализ показаний датчиков (код сгенерирован с помощью AI и проверен вручную)\n// Вход: msg.payload = { student, readings: [числа] }\nconst input = msg.payload || {};\nconst readings = Array.isArray(input.readings) ? input.readings : [];\nconst threshold = 25;            // порог «высокой» температуры, °C\n\nlet sum = 0;\nlet max = -Infinity;\nlet min = Infinity;\nconst above = [];                // массив значений выше порога\n\nfor (let i = 0; i < readings.length; i++) {\n    const value = Number(readings[i]);\n    sum += value;\n    if (value > max) max = value;\n    if (value < min) min = value;\n    if (value > threshold) {\n        above.push(value);\n    }\n}\n\nconst avg = readings.length > 0 ? sum / readings.length : 0;\n\nlet status;\nif (readings.length === 0) {\n    status = \"empty\";\n} else if (avg > threshold) {\n    status = \"high\";\n} else {\n    status = \"normal\";\n}\n\n// Результат — объект\nconst result = {\n    student: input.student || \"unknown\",\n    count: readings.length,\n    avg: Number(avg.toFixed(2)),\n    min: readings.length ? min : null,\n    max: readings.length ? max : null,\n    aboveThreshold: above,\n    status: status\n};\n\nmsg.topic = \"lab2/dusov/function\";\nmsg.payload = result;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "d000000000006"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000006",
+        "type": "debug",
+        "z": "t000000000005",
+        "name": "результат функции",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    }
+]

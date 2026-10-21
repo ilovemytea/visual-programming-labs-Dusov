@@ -1,0 +1,90 @@
+[
+    {
+        "id": "t00000000001c",
+        "type": "tab",
+        "label": "06 HTTP Request (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000020",
+        "type": "comment",
+        "z": "t00000000001c",
+        "name": "2.6 GET, Return = a parsed JSON object",
+        "info": "",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i00000000001f",
+        "type": "inject",
+        "z": "t00000000001c",
+        "name": "Запросить факт",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/http",
+        "payload": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 120,
+        "wires": [
+            [
+                "r00000000001e"
+            ]
+        ]
+    },
+    {
+        "id": "r00000000001e",
+        "type": "http request",
+        "z": "t00000000001c",
+        "name": "GET catfact.ninja/fact",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://catfact.ninja/fact",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "d00000000001d"
+            ]
+        ]
+    },
+    {
+        "id": "d00000000001d",
+        "type": "debug",
+        "z": "t00000000001c",
+        "name": "ответ API",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    }
+]

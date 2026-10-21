@@ -1,0 +1,66 @@
+[
+    {
+        "id": "t000000000001",
+        "type": "tab",
+        "label": "01 Inject → Debug (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000004",
+        "type": "comment",
+        "z": "t000000000001",
+        "name": "2.1 inject → debug, Repeat = 5 s",
+        "info": "",
+        "x": 220,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i000000000003",
+        "type": "inject",
+        "z": "t000000000001",
+        "name": "Фамилия каждые 5 с",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "lab2/dusov/basic",
+        "payload": "Дусов, группа СПД ИИ-241",
+        "payloadType": "str",
+        "x": 230,
+        "y": 120,
+        "wires": [
+            [
+                "d000000000002"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000002",
+        "type": "debug",
+        "z": "t000000000001",
+        "name": "complete msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 120,
+        "wires": []
+    }
+]

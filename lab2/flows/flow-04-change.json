@@ -1,0 +1,107 @@
+[
+    {
+        "id": "t000000000012",
+        "type": "tab",
+        "label": "04 Change (Дусов)",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c000000000016",
+        "type": "comment",
+        "z": "t000000000012",
+        "name": "2.4 Set msg.topic, msg.timestamp, msg.payload",
+        "info": "",
+        "x": 270,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "i000000000015",
+        "type": "inject",
+        "z": "t000000000012",
+        "name": "Старт",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.5,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 120,
+        "wires": [
+            [
+                "h000000000014"
+            ]
+        ]
+    },
+    {
+        "id": "h000000000014",
+        "type": "change",
+        "z": "t000000000012",
+        "name": "topic + timestamp + payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "lab2/dusov/change",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "timestamp",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"student\": \"Дусов\", \"group\": \"СПД ИИ-241\", \"lab\": 2, \"node\": \"change\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "d000000000013"
+            ]
+        ]
+    },
+    {
+        "id": "d000000000013",
+        "type": "debug",
+        "z": "t000000000012",
+        "name": "complete msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    }
+]
