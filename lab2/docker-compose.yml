@@ -1,0 +1,15 @@
+# Node-RED для лабораторной №2 (Дусов)
+# Запуск:  docker compose up -d      (из папки lab2)
+# Редактор: http://localhost:1880    Dashboard: http://localhost:1880/ui
+services:
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red-dusov
+    ports:
+      - "1880:1880"
+    volumes:
+      # локальная папка хоста -> /data в контейнере (потоки, установленные ноды, файлы из 2.11)
+      - ./node-red-data:/data
+    environment:
+      - TZ=Europe/Minsk
+    restart: unless-stopped

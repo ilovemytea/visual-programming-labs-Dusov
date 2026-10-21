@@ -1,0 +1,2 @@
+# Данные Node-RED из volume: там credentials (токен Telegram-бота) и node_modules
+node-red-data/
