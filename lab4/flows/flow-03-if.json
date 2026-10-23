@@ -1,0 +1,135 @@
+{
+  "id": "dusovLab4Flow03",
+  "name": "03 IF node (Дусов)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "4db25339-b998-5ee8-8087-d1f5ccc397a5",
+      "name": "Ручной запуск",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Анализ показаний датчика (код сгенерирован с помощью AI и проверен вручную)\n// Используются: let/const, if/else, цикл for, массив, объект\nconst student = 'Дусов, СПД ИИ-241';\nconst readingsSets = [\n  { name: 'Склад №1', readings: [21.5, 24.0, 27.3, 26.1, 23.8] },\n  { name: 'Склад №2', readings: [28.4, 30.1, 26.9, 29.5] },\n];\nconst threshold = 25;            // порог «высокой» температуры, °C\n\nconst result = [];\nfor (const set of readingsSets) {\n  let sum = 0;\n  let max = -Infinity;\n  let min = Infinity;\n  const above = [];              // массив значений выше порога\n  for (let i = 0; i < set.readings.length; i++) {\n    const value = set.readings[i];\n    sum += value;\n    if (value > max) max = value;\n    if (value < min) min = value;\n    if (value > threshold) {\n      above.push(value);\n    }\n  }\n  const avg = set.readings.length ? sum / set.readings.length : 0;\n  let status;\n  if (set.readings.length === 0) {\n    status = 'empty';\n  } else if (avg > threshold) {\n    status = 'high';\n  } else {\n    status = 'normal';\n  }\n  // Результат — объект с полем payload\n  result.push({\n    json: {\n      topic: 'lab4/dusov/code',\n      payload: {\n        student,\n        sensor: set.name,\n        count: set.readings.length,\n        avg: Number(avg.toFixed(2)),\n        min,\n        max,\n        aboveThreshold: above,\n        status,\n      },\n    },\n  });\n}\nreturn result;"
+      },
+      "id": "625d48f1-ec4d-543b-8389-51715cfc1bcf",
+      "name": "Code: статистика показаний",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9dfa405d-434f-5015-ba0e-2a5eee3608b4",
+              "leftValue": "={{ $json.payload.status }}",
+              "rightValue": "high",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cde39543-940c-5a09-a757-08180c778a47",
+      "name": "IF: status = high?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "2214e458-35f0-57d5-8e9c-7dccdca1808c",
+      "name": "NoOp: высокая (true)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        680,
+        -100
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6481b208-bf85-57fa-9ee8-fb9a52bf1852",
+      "name": "NoOp: норма (false)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        680,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Ручной запуск": {
+      "main": [
+        [
+          {
+            "node": "Code: статистика показаний",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: статистика показаний": {
+      "main": [
+        [
+          {
+            "node": "IF: status = high?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: status = high?": {
+      "main": [
+        [
+          {
+            "node": "NoOp: высокая (true)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NoOp: норма (false)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

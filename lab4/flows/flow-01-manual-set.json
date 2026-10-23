@@ -1,0 +1,91 @@
+{
+  "id": "dusovLab4Flow01",
+  "name": "01 Manual → Set → Code (Дусов)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "18d5efa2-64d0-540b-b88a-79017be9af88",
+      "name": "Ручной запуск",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be01f036-dc44-58d1-bbd7-251545e13c17",
+              "name": "payload",
+              "value": "Дусов, группа СПД ИИ-241",
+              "type": "string"
+            },
+            {
+              "id": "a32a16e1-7e92-5d70-9e78-ba8553d0ac37",
+              "name": "topic",
+              "value": "lab4/dusov/basic",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "eba5a6ef-4a39-58c5-8ff5-c24c87cdd932",
+      "name": "Set: фамилия и topic",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Выводим в консоль то, что пришло из Set, и возвращаем данные дальше\nconst items = $input.all();\nfor (const item of items) {\n  console.log('lab4 debug:', JSON.stringify(item.json));\n}\nreturn items.map(item => ({\n  json: {\n    received: item.json,\n    note: 'Данные получены из ноды Set',\n  },\n}));"
+      },
+      "id": "01f1492c-525d-567b-87d1-98d46c21bdab",
+      "name": "Code: вывод данных",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Ручной запуск": {
+      "main": [
+        [
+          {
+            "node": "Set: фамилия и topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: фамилия и topic": {
+      "main": [
+        [
+          {
+            "node": "Code: вывод данных",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

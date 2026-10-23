@@ -1,0 +1,73 @@
+{
+  "id": "dusovLab4Flow02",
+  "name": "02 Code node (Дусов)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "60ca2cca-d7e7-52e6-b067-8d85859fb3d8",
+      "name": "Ручной запуск",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Анализ показаний датчика (код сгенерирован с помощью AI и проверен вручную)\n// Используются: let/const, if/else, цикл for, массив, объект\nconst student = 'Дусов, СПД ИИ-241';\nconst readingsSets = [\n  { name: 'Склад №1', readings: [21.5, 24.0, 27.3, 26.1, 23.8] },\n  { name: 'Склад №2', readings: [28.4, 30.1, 26.9, 29.5] },\n];\nconst threshold = 25;            // порог «высокой» температуры, °C\n\nconst result = [];\nfor (const set of readingsSets) {\n  let sum = 0;\n  let max = -Infinity;\n  let min = Infinity;\n  const above = [];              // массив значений выше порога\n  for (let i = 0; i < set.readings.length; i++) {\n    const value = set.readings[i];\n    sum += value;\n    if (value > max) max = value;\n    if (value < min) min = value;\n    if (value > threshold) {\n      above.push(value);\n    }\n  }\n  const avg = set.readings.length ? sum / set.readings.length : 0;\n  let status;\n  if (set.readings.length === 0) {\n    status = 'empty';\n  } else if (avg > threshold) {\n    status = 'high';\n  } else {\n    status = 'normal';\n  }\n  // Результат — объект с полем payload\n  result.push({\n    json: {\n      topic: 'lab4/dusov/code',\n      payload: {\n        student,\n        sensor: set.name,\n        count: set.readings.length,\n        avg: Number(avg.toFixed(2)),\n        min,\n        max,\n        aboveThreshold: above,\n        status,\n      },\n    },\n  });\n}\nreturn result;"
+      },
+      "id": "31091b81-00b0-5357-b3ff-b677a2702508",
+      "name": "Code: статистика показаний",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "304e27fd-cea0-5dae-8662-231bbaa900e3",
+      "name": "NoOp: конец",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Ручной запуск": {
+      "main": [
+        [
+          {
+            "node": "Code: статистика показаний",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: статистика показаний": {
+      "main": [
+        [
+          {
+            "node": "NoOp: конец",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
