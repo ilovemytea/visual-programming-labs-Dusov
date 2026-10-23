@@ -29,7 +29,8 @@
 
 ## 3. Ссылка на dev-версию приложения
 
-[https://<имя-приложения>.bubbleapps.io/version-test](https://<имя-приложения>.bubbleapps.io/version-test)
+Главная страница: [https://my-app-261023-90430.bubbleapps.io/version-test](https://my-app-261023-90430.bubbleapps.io/version-test)
+Страница отзывов (CRUD): [https://my-app-261023-90430.bubbleapps.io/version-test/reviews](https://my-app-261023-90430.bubbleapps.io/version-test/reviews)
 
 ## 4. Исследование идеи (Build Guides)
 
@@ -79,25 +80,45 @@ Bookshelf app: a public catalog of books with title, author, genre and year. Use
 | `recommend` | yes / no | рекомендую ли книгу |
 | `book` | Book (ссылка на тип) | к какой книге отзыв |
 
-Добавлено 3 записи вручную через App Data.
+Добавлено 3 записи вручную через App Data. Поле `book` связано с типом Книга; чтобы в списках показывались названия книг, а не ID, в **Edit primary fields** для типа Книга выбрано поле «Название».
+
+**Приватность:** при создании типа была включена галочка «private by default», и отзывы видел бы только их автор. Поскольку сайт публичный, в Data → Privacy для **Everyone else** включены `Find this in searches`, `View` (все поля) и `Auto-bind`.
+
+**Проблема с лимитом:** при добавлении первой записи Bubble выдал ошибку «This application is at its usage limit». Причина — лимит бесплатного плана: **200 записей в базе (Database things)**, а AI-агент при генерации создал 230 тестовых книг. Лишние тестовые книги удалены через App data (осталось 185), после чего записи сохраняются. Вывод: данные, сгенерированные AI, нужно проверять.
 
 ![Типы данных](../screenshots/06-data-type.png)
+![Приватность Review](../screenshots/06-data-privacy.png)
 ![Записи](../screenshots/07-data-records.png)
 
 ### 6.2. CRUD на странице `reviews`
 
-UI страницы создан AI-агентом Bubble, workflows настроены вручную.
+UI страницы (форма «Добавить отзыв» и список «Reviews List» с полями редактирования в каждой карточке) создан AI-агентом Bubble по промпту из раздела 7. Workflows проверены вручную: каждое действие — отдельный workflow.
 
 | Операция | Элемент | Workflow |
 | --- | --- | --- |
-| **Create** | кнопка «Добавить отзыв» | When Button is clicked → Create a new thing (Review) → поля из inputs → Reset relevant inputs |
-| **Read** | Repeating Group | Data source: `Do a search for Reviews`, сортировка по `read_date` (descending) |
-| **Update** | кнопка «Сохранить» в ячейке | When Button is clicked → Make changes to a thing → `Current cell's Review` |
-| **Delete** | кнопка «Удалить» в ячейке | When Button is clicked → Delete thing → `Current cell's Review` |
+| **Create** | кнопка «Добавить отзыв» (Add Button) | workflow «Добавить отзыв»: Add Button is clicked → **Create a new Review** (book = Book Dropdown's value, text = Text Input's value, rating = Rating Dropdown's value, read_date = Date picker's value, recommend = Recommend Checkbox is checked) → **Reset relevant inputs** |
+| **Read** | Repeating Group «Reviews List» | Data source: `Do a search for Reviews` — список всех отзывов, по карточке на каждый |
+| **Update** | кнопка «Сохранить» в карточке | workflow «Сохранить отзыв»: Save Button is clicked → **Make changes to Review**, Thing to change = `Parent group's Review`, поля берутся из полей этой карточки |
+| **Delete** | кнопка «Удалить» в карточке | workflow «Удалить отзыв»: Delete Button is clicked → **Delete Review**, To delete = `Parent group's Review` |
 
-![Create в Preview](../screenshots/08-workflow-create.png)
+`Parent group's Review` — это отзыв той карточки, внутри которой нажата кнопка: карточка-группа получает данные из текущей ячейки Repeating Group, поэтому изменяется или удаляется именно этот отзыв.
+
+**Страница, созданная AI:**
+
+![AI создал страницу reviews](../screenshots/08-ai-reviews-page.png)
+
+**Проверка в Preview (Read и Create):**
+
+![Read — список отзывов](../screenshots/08-workflow-read.png)
+![Create — новый отзыв в списке](../screenshots/08-workflow-create.png)
+
+**Workflows:**
+
 ![Workflow Create](../screenshots/09-workflow-create.png)
+![Поля Create a new Review](../screenshots/09-workflow-create-fields.png)
 ![Workflow Delete](../screenshots/10-workflow-delete.png)
+![Шаг Delete Review](../screenshots/10-workflow-delete-step.png)
+![Workflow Update](../screenshots/10-workflow-update.png)
 
 ## 7. Использованные AI-промпты
 
@@ -106,14 +127,15 @@ UI страницы создан AI-агентом Bubble, workflows настр�
   «Придумай для Bubble-приложения "Книжная полка" новую сущность, связанную с книгами. Дай название типа данных и 4–5 полей разных типов (text, number, date, yes/no, ссылка на тип Book) с кратким назначением каждого поля».
   Результат: тип **Review (Отзыв)** с полями `text`, `rating`, `read_date`, `recommend`, `book` (см. раздел 6.1).
 * *Промпт для страницы CRUD (AI-агент Bubble):*
-  «Создай новую страницу reviews для типа данных Review. На странице: форма добавления отзыва (выбор книги из списка Book, текст отзыва, оценка 1–5, дата прочтения, чекбокс "Рекомендую") и кнопка "Добавить отзыв"; ниже Repeating Group со всеми отзывами, в каждой ячейке поля для редактирования и кнопки "Сохранить" и "Удалить". Сохрани структуру header + body + footer и строку «ТВП: Дусов»».
+  «Создай новую страницу reviews для типа данных Review. На странице: форма добавления отзыва (выбор книги из списка Book, текст отзыва, оценка 1–5, дата прочтения, чекбокс "Рекомендую") и кнопка "Добавить отзыв"; ниже Repeating Group со всеми отзывами, в каждой ячейке поля для редактирования и кнопки "Сохранить" и "Удалить". Сохрани структуру header + body + footer и строку «ТВП: Дусов». Не создавай тестовые данные и не меняй существующие типы данных»».
 
 ## 8. Освоенные элементы и workflows
 
 * **Элементы:** Text, Button, Input, Multiline Input, Dropdown, Date/Time Picker, Checkbox, Repeating Group, Group, готовый компонент из COMPONENTS.
 * **Дизайн:** Global variables (Color), Styles.
 * **Data:** Data Types, поля разных типов, связь между типами (Review → Book), App Data.
-* **Workflows:** `Create a new thing`, `Make changes to a thing`, `Delete thing`, `Reset relevant inputs`; источник данных `Do a search for`.
+* **Workflows:** события `Button is clicked`; действия `Create a new thing`, `Make changes to a thing`, `Delete thing`, `Reset relevant inputs`; источник данных `Do a search for` с ограничениями (constraints) и `Ignore empty constraints`; ссылки `Parent group's ...`.
+* **Data и настройки:** Privacy rules, Edit primary fields, лимиты бесплатного плана (200 записей), App Metrics.
 
 ## 9. Вывод
 
