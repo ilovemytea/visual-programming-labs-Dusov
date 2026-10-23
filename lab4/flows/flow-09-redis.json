@@ -1,0 +1,94 @@
+{
+  "id": "dusovLab4Flow09",
+  "name": "09 Redis Set + Get (Дусов)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5096cd9b-6d70-5808-87fc-80510630ef50",
+      "name": "Ручной запуск",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "dusov",
+        "value": "Дусов, СПД ИИ-241, lab4 — ключ создан из n8n",
+        "keyType": "string"
+      },
+      "id": "ee2b4a21-d4e8-5da1-a757-c3ef731c4a5b",
+      "name": "Redis: Set dusov",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "credentials": {
+        "redis": {
+          "id": "dusovRedisCred01",
+          "name": "Redis Dusov (local)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "value",
+        "key": "dusov",
+        "keyType": "string",
+        "options": {}
+      },
+      "id": "f97121d3-3fb6-57c7-83aa-b9d95fbd8c9f",
+      "name": "Redis: Get dusov",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "credentials": {
+        "redis": {
+          "id": "dusovRedisCred01",
+          "name": "Redis Dusov (local)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Ручной запуск": {
+      "main": [
+        [
+          {
+            "node": "Redis: Set dusov",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis: Set dusov": {
+      "main": [
+        [
+          {
+            "node": "Redis: Get dusov",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

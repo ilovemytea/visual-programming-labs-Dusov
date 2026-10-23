@@ -1,0 +1,115 @@
+{
+  "id": "dusovLab4Flow10",
+  "name": "10 Redis Delete + проверка (Дусов)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "4fe7fdee-e36e-5cc9-ae27-b02b6d37ff95",
+      "name": "Ручной запуск",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "dusov"
+      },
+      "id": "3b6d0e56-01de-5a6d-bc22-8e765ddbcb3f",
+      "name": "Redis: Delete dusov",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "credentials": {
+        "redis": {
+          "id": "dusovRedisCred01",
+          "name": "Redis Dusov (local)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "dusov",
+        "getValues": false
+      },
+      "id": "3cc65ef3-b4df-5050-8780-5a4cd05aef60",
+      "name": "Redis: Keys dusov (exists?)",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "credentials": {
+        "redis": {
+          "id": "dusovRedisCred01",
+          "name": "Redis Dusov (local)"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// В Redis-ноде n8n нет операции Exists, поэтому проверяем через KEYS:\n// Keys возвращает { keys: [...] } — список найденных ключей; пустой список = ключа нет\nconst found = $input.all().flatMap(item => Array.isArray(item.json.keys) ? item.json.keys : Object.keys(item.json));\nconst exists = found.includes('dusov');\nreturn [{\n  json: {\n    key: 'dusov',\n    exists,\n    message: exists ? 'Ключ всё ещё существует' : 'Ключ удалён — его больше нет в Redis',\n  },\n}];"
+      },
+      "id": "c7dc46e8-5382-5794-87b8-590e182a0756",
+      "name": "Code: ключа нет?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Ручной запуск": {
+      "main": [
+        [
+          {
+            "node": "Redis: Delete dusov",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis: Delete dusov": {
+      "main": [
+        [
+          {
+            "node": "Redis: Keys dusov (exists?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis: Keys dusov (exists?)": {
+      "main": [
+        [
+          {
+            "node": "Code: ключа нет?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
