@@ -1,0 +1,60 @@
+{
+  "id": "dusovLab4Flow06",
+  "name": "06 Schedule Trigger (Дусов)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "22f83641-41df-561e-aa0d-12dd2e5f7dfb",
+      "name": "Schedule: каждые 5 минут",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Возвращаем текущее время запуска по расписанию\nconst now = new Date();\nreturn [{\n  json: {\n    student: 'Дусов, СПД ИИ-241',\n    topic: 'lab4/dusov/schedule',\n    iso: now.toISOString(),\n    local: now.toLocaleString('ru-RU', { timeZone: 'Europe/Minsk' }),\n  },\n}];"
+      },
+      "id": "174f67ff-43af-5ee0-b615-1a551ee0a472",
+      "name": "Code: текущее время",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule: каждые 5 минут": {
+      "main": [
+        [
+          {
+            "node": "Code: текущее время",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

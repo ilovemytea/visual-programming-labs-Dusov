@@ -1,0 +1,82 @@
+{
+  "id": "dusovLab4Flow05",
+  "name": "05 HTTP Request (Дусов)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "ebc1f935-e497-5cdd-af99-1a102893ccd6",
+      "name": "Ручной запуск",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://catfact.ninja/fact",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "25e4978e-011e-5890-a877-8b30f825e1d6",
+      "name": "HTTP Request: catfact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Разбираем JSON-ответ публичного API\nconst data = $input.first().json;\nreturn [{\n  json: {\n    student: 'Дусов, СПД ИИ-241',\n    source: 'https://catfact.ninja/fact',\n    fact: data.fact,\n    length: data.length,\n    receivedAt: new Date().toISOString(),\n  },\n}];"
+      },
+      "id": "ed219a01-21f1-5b78-bd94-770b1671d105",
+      "name": "Code: разбор ответа",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Ручной запуск": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request: catfact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request: catfact": {
+      "main": [
+        [
+          {
+            "node": "Code: разбор ответа",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

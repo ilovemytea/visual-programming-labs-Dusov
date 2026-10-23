@@ -1,0 +1,97 @@
+{
+  "id": "dusovLab4Flow04",
+  "name": "04 Set node (Дусов)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f1e2652f-e1f3-5008-b07f-bae001d9aa72",
+      "name": "Ручной запуск",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6ded8e18-ac89-540f-9e04-085985532ab6",
+              "name": "topic",
+              "value": "lab4/dusov/set",
+              "type": "string"
+            },
+            {
+              "id": "cabad213-5c99-5455-bffc-9611477c3c2f",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "9d7c3d84-e159-5725-b4fc-4501e09d51c4",
+              "name": "payload",
+              "value": "{\"student\": \"Дусов\", \"group\": \"СПД ИИ-241\", \"lab\": 4, \"node\": \"set\"}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9a04f20a-7088-5b73-bce4-06c89972e3a4",
+      "name": "Set: topic, timestamp, payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Показываем полный объект сообщения (complete msg object):\n// все поля, которые пришли из Set, и их типы\nreturn $input.all().map(item => ({\n  json: {\n    completeMsg: item.json,\n    fields: Object.keys(item.json),\n    types: Object.fromEntries(Object.entries(item.json).map(([k, v]) => [k, typeof v])),\n  },\n}));"
+      },
+      "id": "fe3e1285-8ee6-55c0-b806-0d72426107c6",
+      "name": "Code: полный объект",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Ручной запуск": {
+      "main": [
+        [
+          {
+            "node": "Set: topic, timestamp, payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: topic, timestamp, payload": {
+      "main": [
+        [
+          {
+            "node": "Code: полный объект",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
