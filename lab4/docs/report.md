@@ -76,7 +76,8 @@ AI использовался для генерации кода Code-нод, JS
 | Задание | Скриншот |
 | :--- | :--- |
 | **1. Версия n8n** | ![01](../screenshots/01-version.png) |
-| **2.1. Manual Trigger → Set → Code** | ![02](../screenshots/02-manual-set.png) |
+| **2.1. Manual Trigger → Set → Code (схема)** | ![02-flow](../screenshots/02-manual-set-flow.png) |
+| **2.1. Manual Trigger → Set → Code (результат)** | ![02](../screenshots/02-manual-set.png) |
 | **2.2. Code node** | ![03](../screenshots/03-code.png) |
 | **2.3. IF node** | ![04](../screenshots/04-if.png) |
 | **2.4. Set node** | ![05](../screenshots/05-set.png) |
