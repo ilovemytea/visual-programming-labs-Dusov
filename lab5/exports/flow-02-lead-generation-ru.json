@@ -1,0 +1,668 @@
+{
+  "version": "6.1",
+  "name": "lab5-Дусов-СПД-ИИ-241 Сбор заявок",
+  "icon": "🤝",
+  "events": [
+    {
+      "id": "k6kY6gwRE6noPoYQNGzgUq",
+      "type": "start",
+      "outgoingEdgeId": "oNvqaqNExdSH2kKEhKZHuE",
+      "graphCoordinates": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "kinRXxYop2X4d7F9qt8WNB",
+      "title": "Приветствие",
+      "blocks": [
+        {
+          "id": "sc1y8VwDabNJgiVTBi4qtif",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Добро пожаловать в "
+                  },
+                  {
+                    "bold": true,
+                    "text": "АА"
+                  },
+                  {
+                    "text": " (Агентство Дусова) 👋"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "s7YqZTBeyCa4Hp3wN2j922c",
+          "type": "image",
+          "content": {
+            "url": "https://media2.giphy.com/media/XD9o33QG9BoMis7iM4/giphy.gif?cid=fe3852a3ihg8rvipzzky5lybmdyq38fhke2tkrnshwk52c7d&rid=giphy.gif&ct=g"
+          }
+        },
+        {
+          "id": "sbjZWLJGVkHAkDqS4JQeGow",
+          "type": "choice input",
+          "items": [
+            {
+              "id": "hQw2zbp7FDX7XYK9cFpbgC",
+              "content": "Привет!"
+            }
+          ],
+          "outgoingEdgeId": "i51YhHpk1dtSyduFNf5Wim"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 0,
+        "y": 140
+      }
+    },
+    {
+      "id": "q5dAhqSTCaNdiGSJm9B9Rw",
+      "title": "Имя",
+      "blocks": [
+        {
+          "id": "sgtE2Sy7cKykac9B223Kq9R",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Как вас зовут?"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "sqEsMo747LTDnY9FjQcEwUv",
+          "type": "text input",
+          "options": {
+            "labels": {
+              "button": "Отправить",
+              "placeholder": "Введите ваше имя..."
+            },
+            "variableId": "giiLFGw5xXBCHzvp1qAbdX"
+          },
+          "outgoingEdgeId": "cy2rdyj4way9lkm08ittygaw"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 340,
+        "y": 140
+      }
+    },
+    {
+      "id": "c6y0r57yfm3f554u4wpo53uw",
+      "title": "Возраст по имени (HTTP)",
+      "blocks": [
+        {
+          "id": "chahq9jhcwbaj6sst7iyni8q",
+          "type": "Webhook",
+          "options": {
+            "webhook": {
+              "url": "https://api.agify.io/?name={{Name}}",
+              "method": "GET"
+            },
+            "responseVariableMapping": [
+              {
+                "id": "ch48hq41vlx4ca006uwckndo",
+                "bodyPath": "data.age",
+                "variableId": "cjkmwgs8g9h2fvs08c5ia4rl"
+              }
+            ]
+          }
+        },
+        {
+          "id": "c5ecbi18uejy7dayomqutev8",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "{{Name}}, по данным сервиса agify.io людям с таким именем в среднем {{Возраст}} лет 🙂"
+                  }
+                ]
+              }
+            ]
+          },
+          "outgoingEdgeId": "clymjckbojjslb33sii1ltid"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 680,
+        "y": 140
+      }
+    },
+    {
+      "id": "o4SH1UtKANnW5N5D67oZUz",
+      "title": "Email",
+      "blocks": [
+        {
+          "id": "sxeYubYN6XzhAfG7m9Fivhc",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Отлично! Приятно познакомиться, {{Name}}"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "scQ5kduafAtfP9T8SHUJnGi",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "На какой email нам лучше написать?"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "snbsad18Bgry8yZ8DZCfdFD",
+          "type": "email input",
+          "options": {
+            "labels": {
+              "button": "Отправить",
+              "placeholder": "Введите ваш email..."
+            },
+            "variableId": "v3VFChNVSCXQ2rXv4DrJ8Ah",
+            "retryMessageContent": "Похоже, в email есть ошибка. Попробуйте ввести его ещё раз."
+          },
+          "outgoingEdgeId": "w3MiN1Ct38jT5NykVsgmb5"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 1020,
+        "y": 140
+      }
+    },
+    {
+      "id": "fKqRz7iswk7ULaj5PJocZL",
+      "title": "Услуги",
+      "blocks": [
+        {
+          "id": "su7HceVXWyTCzi2vv3m4QbK",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Какие услуги вас интересуют?"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "s5VQGsVF4hQgziQsXVdwPDW",
+          "type": "choice input",
+          "items": [
+            {
+              "id": "fnLCBF4NdraSwcubnBhk8H",
+              "content": "Разработка сайта"
+            },
+            {
+              "id": "a782h8ynMouY84QjH7XSnR",
+              "content": "Контент-маркетинг"
+            },
+            {
+              "id": "jGvh94zBByvVFpSS3w97zY",
+              "content": "Социальные сети"
+            },
+            {
+              "id": "6PRLbKUezuFmwWtLVbvAQ7",
+              "content": "UI / UX-дизайн"
+            }
+          ],
+          "options": {
+            "variableId": "ca9d080otffosp5chpizvza6"
+          },
+          "outgoingEdgeId": "ckyngwyxiocj5o56l4cckkbn"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 1360,
+        "y": 140
+      }
+    },
+    {
+      "id": "cdhconmohgy9bjmwlgkncbvb",
+      "title": "Бюджет",
+      "blocks": [
+        {
+          "id": "c49wl1bji268elx66xx6kr5a",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Какой примерный бюджет проекта (в BYN)?"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "cx5csx2eu789wmjxx4o7uiaj",
+          "type": "number input",
+          "options": {
+            "labels": {
+              "button": "Отправить",
+              "placeholder": "Введите сумму..."
+            },
+            "variableId": "cm2gvrxo31ia75km0kfm8grh"
+          }
+        },
+        {
+          "id": "c82ke6kux3ypa2s7lvcsbgwc",
+          "type": "Condition",
+          "items": [
+            {
+              "id": "c2sh1esvp4hhmwyz2neqjme7",
+              "content": {
+                "comparisons": [
+                  {
+                    "id": "c1dium6rsi6n5u7ds4on48mp",
+                    "value": "1000",
+                    "variableId": "cm2gvrxo31ia75km0kfm8grh",
+                    "comparisonOperator": "Greater than"
+                  }
+                ]
+              },
+              "outgoingEdgeId": "chmet6qrik8tbmhs1lemeity"
+            }
+          ],
+          "outgoingEdgeId": "cyzvj8bmn1lh3pcyxyxvfs5b"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 1700,
+        "y": 140
+      }
+    },
+    {
+      "id": "cnfilwmsr3w35cnvn7qwseu3",
+      "title": "Сегмент: Премиум",
+      "blocks": [
+        {
+          "id": "cw4ew16azbiojm190i3vpy0p",
+          "type": "Set variable",
+          "options": {
+            "variableId": "c8h9wj154q1q9ux3donxh6sz",
+            "expressionToEvaluate": "Премиум"
+          }
+        },
+        {
+          "id": "ccjqnpij3qn9462hr4e4bnks",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Бюджет больше 1000 BYN — это сегмент «{{Сегмент}}». Вашим проектом займётся ведущий менеджер."
+                  }
+                ]
+              }
+            ]
+          },
+          "outgoingEdgeId": "ccvf6aqdu2npgj8vw1694a1o"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 2040,
+        "y": 0
+      }
+    },
+    {
+      "id": "cs18hkmycdulctjd6k99ptxh",
+      "title": "Сегмент: Стандарт",
+      "blocks": [
+        {
+          "id": "c8p7e51cuuznfoj86tnit09z",
+          "type": "Set variable",
+          "options": {
+            "variableId": "c8h9wj154q1q9ux3donxh6sz",
+            "expressionToEvaluate": "Стандарт"
+          }
+        },
+        {
+          "id": "c8qx0604rwlp9p0ejsdcbkhi",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Бюджет до 1000 BYN — это сегмент «{{Сегмент}}». Подберём для вас оптимальное решение."
+                  }
+                ]
+              }
+            ]
+          },
+          "outgoingEdgeId": "cxi0t6sp3zfiadatz11xh1w9"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 2040,
+        "y": 380
+      }
+    },
+    {
+      "id": "7qHBEyCMvKEJryBHzPmHjV",
+      "title": "Подробности",
+      "blocks": [
+        {
+          "id": "sqR8Sz9gW21aUYKtUikq7qZ",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Расскажите немного подробнее о вашей задаче."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "sqFy2G3C1mh9p6s3QBdSS5x",
+          "type": "text input",
+          "options": {
+            "isLong": true,
+            "labels": {
+              "button": "Отправить",
+              "placeholder": "Опишите задачу..."
+            }
+          },
+          "outgoingEdgeId": "sH5nUssG2XQbm6ZidGv9BY"
+        }
+      ],
+      "graphCoordinates": {
+        "x": 2380,
+        "y": 140
+      }
+    },
+    {
+      "id": "vF7AD7zSAj7SNvN3gr9N94",
+      "title": "Прощание",
+      "blocks": [
+        {
+          "id": "seLegenCgUwMopRFeAefqZ7",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Отлично, заявка принята! ✅"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "s779Q1y51aVaDUJVrFb16vv",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Мы свяжемся с вами по адресу {{Email}}. Ваш сегмент: {{Сегмент}}."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "ci58eelnr8jstetq951vkod9",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "ТВП: Дусов, СПД ИИ-241"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "graphCoordinates": {
+        "x": 2720,
+        "y": 140
+      }
+    }
+  ],
+  "variables": [
+    {
+      "id": "giiLFGw5xXBCHzvp1qAbdX",
+      "name": "Name",
+      "isSessionVariable": false
+    },
+    {
+      "id": "v3VFChNVSCXQ2rXv4DrJ8Ah",
+      "name": "Email",
+      "isSessionVariable": false
+    },
+    {
+      "id": "cjkmwgs8g9h2fvs08c5ia4rl",
+      "name": "Возраст",
+      "isSessionVariable": false
+    },
+    {
+      "id": "ca9d080otffosp5chpizvza6",
+      "name": "Услуга",
+      "isSessionVariable": false
+    },
+    {
+      "id": "cm2gvrxo31ia75km0kfm8grh",
+      "name": "Бюджет",
+      "isSessionVariable": false
+    },
+    {
+      "id": "c8h9wj154q1q9ux3donxh6sz",
+      "name": "Сегмент",
+      "isSessionVariable": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "oNvqaqNExdSH2kKEhKZHuE",
+      "to": {
+        "groupId": "kinRXxYop2X4d7F9qt8WNB"
+      },
+      "from": {
+        "eventId": "k6kY6gwRE6noPoYQNGzgUq"
+      }
+    },
+    {
+      "id": "i51YhHpk1dtSyduFNf5Wim",
+      "to": {
+        "groupId": "q5dAhqSTCaNdiGSJm9B9Rw"
+      },
+      "from": {
+        "blockId": "sbjZWLJGVkHAkDqS4JQeGow"
+      }
+    },
+    {
+      "id": "w3MiN1Ct38jT5NykVsgmb5",
+      "to": {
+        "groupId": "fKqRz7iswk7ULaj5PJocZL"
+      },
+      "from": {
+        "blockId": "snbsad18Bgry8yZ8DZCfdFD"
+      }
+    },
+    {
+      "id": "sH5nUssG2XQbm6ZidGv9BY",
+      "to": {
+        "groupId": "vF7AD7zSAj7SNvN3gr9N94"
+      },
+      "from": {
+        "blockId": "sqFy2G3C1mh9p6s3QBdSS5x"
+      }
+    },
+    {
+      "id": "cy2rdyj4way9lkm08ittygaw",
+      "to": {
+        "groupId": "c6y0r57yfm3f554u4wpo53uw"
+      },
+      "from": {
+        "blockId": "sqEsMo747LTDnY9FjQcEwUv"
+      }
+    },
+    {
+      "id": "clymjckbojjslb33sii1ltid",
+      "to": {
+        "groupId": "o4SH1UtKANnW5N5D67oZUz"
+      },
+      "from": {
+        "blockId": "c5ecbi18uejy7dayomqutev8"
+      }
+    },
+    {
+      "id": "ckyngwyxiocj5o56l4cckkbn",
+      "to": {
+        "groupId": "cdhconmohgy9bjmwlgkncbvb"
+      },
+      "from": {
+        "blockId": "s5VQGsVF4hQgziQsXVdwPDW"
+      }
+    },
+    {
+      "id": "chmet6qrik8tbmhs1lemeity",
+      "to": {
+        "groupId": "cnfilwmsr3w35cnvn7qwseu3"
+      },
+      "from": {
+        "itemId": "c2sh1esvp4hhmwyz2neqjme7",
+        "blockId": "c82ke6kux3ypa2s7lvcsbgwc"
+      }
+    },
+    {
+      "id": "cyzvj8bmn1lh3pcyxyxvfs5b",
+      "to": {
+        "groupId": "cs18hkmycdulctjd6k99ptxh"
+      },
+      "from": {
+        "blockId": "c82ke6kux3ypa2s7lvcsbgwc"
+      }
+    },
+    {
+      "id": "ccvf6aqdu2npgj8vw1694a1o",
+      "to": {
+        "groupId": "7qHBEyCMvKEJryBHzPmHjV"
+      },
+      "from": {
+        "blockId": "ccjqnpij3qn9462hr4e4bnks"
+      }
+    },
+    {
+      "id": "cxi0t6sp3zfiadatz11xh1w9",
+      "to": {
+        "groupId": "7qHBEyCMvKEJryBHzPmHjV"
+      },
+      "from": {
+        "blockId": "c8qx0604rwlp9p0ejsdcbkhi"
+      }
+    }
+  ],
+  "theme": {
+    "chat": {
+      "inputs": {
+        "color": "#1B3A1E",
+        "backgroundColor": "#FFFFFF",
+        "placeholderColor": "#7A8C7C"
+      },
+      "buttons": {
+        "color": "#FFFFFF",
+        "backgroundColor": "#2E7D32"
+      },
+      "hostAvatar": {
+        "isEnabled": true
+      },
+      "hostBubbles": {
+        "color": "#1B3A1E",
+        "backgroundColor": "#FFFFFF"
+      },
+      "guestBubbles": {
+        "color": "#FFFFFF",
+        "backgroundColor": "#2E7D32"
+      }
+    },
+    "general": {
+      "font": {
+        "type": "Google",
+        "family": "Montserrat"
+      },
+      "background": {
+        "type": "Color",
+        "content": "#F1F8E9"
+      },
+      "progressBar": {
+        "color": "#2E7D32",
+        "isEnabled": true,
+        "thickness": 6,
+        "backgroundColor": "#C8E6C9"
+      }
+    }
+  },
+  "settings": {
+    "general": {
+      "isBrandingEnabled": false
+    },
+    "metadata": {
+      "title": "Сбор заявок — Агентство Дусова",
+      "description": "Чат-бот для сбора заявок: имя, email, услуга и бюджет. ТВП: Дусов, СПД ИИ-241."
+    }
+  },
+  "selectedThemeTemplateId": null,
+  "resultsTablePreferences": null
+}
